@@ -1,7 +1,8 @@
 import "./App.css";
 import useData from "./useData";
 import useColumns from "./useColumns";
-import { useTable } from "react-table";
+import { useSortBy, useTable } from "react-table";
+import { FaCaretSquareUp, FaCaretSquareDown } from "react-icons/fa";
 
 function App() {
   const data = useData();
@@ -13,7 +14,7 @@ function App() {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data });
+  } = useTable({ columns, data }, useSortBy);
   return (
     <div className="container">
       <table {...getTableProps()}>
@@ -21,7 +22,20 @@ function App() {
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+                <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render("Header")}
+                  <span>
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <FaCaretSquareDown />
+                      ) : (
+                        <FaCaretSquareUp />
+                      )
+                    ) : (
+                      ""
+                    )}
+                  </span>
+                </th>
               ))}
             </tr>
           ))}
