@@ -1,7 +1,7 @@
 import "./App.css";
 import useData from "./useData";
 import useColumns from "./useColumns";
-import { useSortBy, useTable } from "react-table";
+import { usePagination, useSortBy, useTable } from "react-table";
 import { FaCaretSquareUp, FaCaretSquareDown } from "react-icons/fa";
 
 function App() {
@@ -14,7 +14,22 @@ function App() {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data }, useSortBy);
+    // pagination props
+    page,
+    canNextPage,
+    canPreviousPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+    state: { pageIndex, pageSize },
+  } = useTable(
+    { columns, data, initialState: { pageSize: 10 } },
+    useSortBy,
+    usePagination
+  );
   return (
     <div className="container">
       <table {...getTableProps()}>
@@ -41,7 +56,7 @@ function App() {
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
+          {page.map((row) => {
             prepareRow(row);
             return (
               <tr {...row.getRowProps()}>
@@ -55,6 +70,19 @@ function App() {
           })}
         </tbody>
       </table>
+      <div>
+        <button disabled={!canPreviousPage} onClick={() => previousPage()}>
+          Previous Page
+        </button>
+        <button disabled={!canNextPage} onClick={() => nextPage()}>
+          Next Page
+        </button>
+      </div>
+      <div>
+        <span>
+          Page {pageIndex + 1} of {pageOptions.length}
+        </span>
+      </div>
     </div>
   );
 }
