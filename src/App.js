@@ -3,6 +3,14 @@ import useData from "./useData";
 import useColumns from "./useColumns";
 import { usePagination, useSortBy, useTable } from "react-table";
 import { FaCaretSquareUp, FaCaretSquareDown } from "react-icons/fa";
+import { useExportData } from "react-table-plugins";
+import Papa from "papaparse";
+
+function getExportFileBlob({ columns, data }) {
+  const headerNames = columns.map((column) => column.exportValue);
+  const csvString = Papa.unparse({ fields: headerNames, data });
+  return new Blob([csvString], { type: "text/csv" });
+}
 
 function App() {
   const data = useData();
@@ -24,11 +32,14 @@ function App() {
     nextPage,
     previousPage,
     setPageSize,
+    // export data to any format
+    exportData,
     state: { pageIndex, pageSize },
   } = useTable(
-    { columns, data, initialState: { pageSize: 10 } },
+    { columns, data, initialState: { pageSize: 10 }, getExportFileBlob },
     useSortBy,
-    usePagination
+    usePagination,
+    useExportData
   );
   return (
     <div className="container">
@@ -82,6 +93,9 @@ function App() {
         <span>
           Page {pageIndex + 1} of {pageOptions.length}
         </span>
+      </div>
+      <div>
+        <button onClick={() => exportData("csv")}>Export CSV</button>
       </div>
     </div>
   );
