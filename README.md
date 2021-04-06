@@ -4,3 +4,5 @@ https://medium.com/swlh/how-to-build-awesome-tables-with-react-table-963955fd926
 ### Sorting
 
 ### Paging
+
+### Exporting to CSV
